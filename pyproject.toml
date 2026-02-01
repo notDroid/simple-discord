@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "simple-discord"
+version = "0.1.0"
+description = "A simple discord backend service"
+readme = "README.md"
+requires-python = ">=3.9"
+
+# 1. MARK DEPENDENCIES AS DYNAMIC
+dynamic = ["dependencies"]
+
+# 2. POINT TO THE FILE
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+
+[tool.setuptools.packages.find]
+where = ["src"]
