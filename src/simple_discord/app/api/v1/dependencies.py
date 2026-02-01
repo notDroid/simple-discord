@@ -17,9 +17,15 @@ def get_user_data_repository(dynamodb = Depends(get_dynamo_client)) -> UserDataR
 def get_user_chat_repository(dynamodb = Depends(get_dynamo_client)) -> UserChatRepository:
     return UserChatRepository(dynamodb)
 
+def get_unit_of_work(dynamodb = Depends(get_dynamo_client)):
+    from simple_discord.app.db.unit_of_work import UnitOfWork
+    return lambda: UnitOfWork(dynamodb)
+
 def get_chat_service(
     chat_history_repository: ChatHistoryRepository = Depends(get_chat_history_repository),
     user_chat_repository: UserChatRepository = Depends(get_user_chat_repository),
-    chat_data_repository: ChatDataRepository = Depends(get_chat_data_repository)
+    chat_data_repository: ChatDataRepository = Depends(get_chat_data_repository),
+    unit_of_work = Depends(get_unit_of_work),
+
 ) -> ChatService:
-    return ChatService(chat_history_repository, user_chat_repository, chat_data_repository)
+    return ChatService(chat_history_repository, user_chat_repository, chat_data_repository, unit_of_work)

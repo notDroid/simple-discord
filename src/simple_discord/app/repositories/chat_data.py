@@ -8,19 +8,38 @@ class ChatDataRepository:
     def __init__(self, client):
         self.client = client
 
-    async def create_chat(self, item: ChatDataItem):
+    async def create_chat(self, item: ChatDataItem, unit_of_work=None):
         dynamo_item = to_dynamo_json(item.model_dump())
         
-        await self.client.put_item(
-            TableName=self.table_name,
-            Item=dynamo_item,
-            ConditionExpression='attribute_not_exists(chat_id)',
-        )
-    
-    async def delete_chat(self, chat_id: str):
-        await self.client.delete_item(
-            TableName=self.table_name,
-            Key=to_dynamo_json({
-                "chat_id": chat_id
+        if unit_of_work:
+            unit_of_work.add_operation({
+                "Put": {
+                    "TableName": self.table_name,
+                    "Item": dynamo_item,
+                    "ConditionExpression": "attribute_not_exists(chat_id)"
+                }
             })
+        else:
+            await self.client.put_item(
+                TableName=self.table_name,
+                Item=dynamo_item,
+                ConditionExpression='attribute_not_exists(chat_id)',
+            )
+    
+    async def delete_chat(self, chat_id: str, unit_of_work=None):
+        if unit_of_work:
+            unit_of_work.add_operation({
+                "Delete": {
+                    "TableName": self.table_name,
+                    "Key": to_dynamo_json({
+                        "chat_id": chat_id
+                    })
+                }
+            })
+        else:
+            await self.client.delete_item(
+                TableName=self.table_name,
+                Key=to_dynamo_json({
+                    "chat_id": chat_id
+                })
         )

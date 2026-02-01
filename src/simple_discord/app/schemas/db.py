@@ -12,7 +12,6 @@ ChatMessage = ChatHistoryItem  # Alias for clarity in API schema
 class ChatDataItem(BaseModel):
     chat_id: str
     created_at: str
-    state: str # one of 'valid', 'deleted'
 
 class UserChatItem(BaseModel): # Unused but kept for reference
     chat_id: str
