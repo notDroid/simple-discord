@@ -25,3 +25,14 @@ class UserDataRepository:
                 Item=dynamo_item,
                 ConditionExpression='attribute_not_exists(user_id)',
             )
+
+    async def get_user_by_id(self, user_id: str) -> UserDataItem | None:
+        response = await self.client.get_item(
+            TableName=self.table_name,
+            Key=to_dynamo_json({"user_id": user_id})
+        )
+        item = response.get("Item")
+        if not item:
+            return None
+        user_data = from_dynamo_json(item)
+        return UserDataItem.model_validate(user_data)

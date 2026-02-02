@@ -17,6 +17,11 @@ class UserChatItem(BaseModel): # Unused but kept for reference
     chat_id: str
     user_id: str
 
+class UserMetaData(BaseModel):
+    username: str
+    email: str
+
 class UserDataItem(BaseModel):
     user_id: str
-    username: str
+    created_at: str
+    metadata: UserMetaData

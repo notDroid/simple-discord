@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from .db import ChatMessage
+from .db import ChatMessage, UserMetaData
 
 # Send Message
 class SendMessageRequest(BaseModel):
@@ -20,3 +20,9 @@ class CreateChatRequest(BaseModel):
 
 class CreateChatResponse(BaseModel):
     chat_id: str
+
+# Create User
+CreateUserRequest = UserMetaData  # Alias for clarity in API schema
+
+class CreateUserResponse(BaseModel):
+    user_id: str

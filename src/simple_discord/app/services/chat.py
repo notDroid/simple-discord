@@ -1,10 +1,10 @@
 from ulid import ULID
 from datetime import datetime, timezone
 from fastapi import HTTPException
-
 from simple_discord.app.schemas import *
 from simple_discord.app.repositories import ChatHistoryRepository, UserChatRepository, ChatDataRepository
 from simple_discord.app.db import UnitOfWorkFactory
+from .user import UserService
 
 
 class ChatService:
@@ -37,22 +37,40 @@ class ChatService:
             chat_history_repository: ChatHistoryRepository, 
             user_chat_repository: UserChatRepository, 
             chat_data_repository: ChatDataRepository,
+            user_service: UserService,
             unit_of_work: UnitOfWorkFactory
         ):
         self.chat_history_repository = chat_history_repository
         self.user_chat_repository = user_chat_repository
         self.chat_data_repository = chat_data_repository
+        self.user_service = user_service
         self.uow_factory = unit_of_work
+
+    async def verify_user_in_chat(self, user_id: str, chat_id: str) -> bool:
+        user_in_chat = await self.user_service.verify_user_in_chat(user_id=user_id, chat_id=chat_id)
+        if not user_in_chat:
+            chat_exists = await self.chat_data_repository.chat_exists(chat_id)
+            if not chat_exists:
+                raise HTTPException(404, "Chat does not exist.")
+            raise HTTPException(403, "User is not a member of this chat.")
 
     async def create_chat(self, user_id_list: list[str]) -> str:
         if len(user_id_list) < 2:
             raise HTTPException(400, "A chat must have at least two users.")
         
-        chat_id = str(ULID())
+        # Verify all users exist
+        for user_id in user_id_list:
+            user_exists = await self.user_service.user_exists(user_id)
+            if not user_exists:
+                raise HTTPException(404, f"User {user_id} does not exist.")
+        
+        ulid_val = ULID()
+        chat_id = str(ulid_val)
+        timestamp = datetime.fromtimestamp(ulid_val.timestamp, timezone.utc).isoformat()
         
         chat_data_item = ChatDataItem(
             chat_id=chat_id,
-            created_at=datetime.now(timezone.utc).isoformat()
+            created_at=timestamp
         )
 
         async with self.uow_factory() as uow:
@@ -62,9 +80,8 @@ class ChatService:
         return chat_id
 
     async def send_message(self, chat_id: str, user_id: str, content: str):
-        exists = await self.user_chat_repository.verify_user_chat(chat_id=chat_id, user_id=user_id) # TODO Move to this UserService later
-        if not exists:
-            raise PermissionError("User is not a member of this chat or chat does not exist.")
+        # Verify user is in chat
+        await self.verify_user_in_chat(user_id, chat_id)
         
         ulid_val = ULID()
         ulid_str = str(ulid_val)
@@ -78,10 +95,17 @@ class ChatService:
             content=content
         )
 
-        await self.chat_history_repository.create_message(msg)
+        try:
+            await self.chat_history_repository.create_message(msg)
+        except Exception as e:
+            raise HTTPException(500, f"Failed to send message: {str(e)}")
 
         return timestamp
 
-    async def get_chat_history(self, chat_id: str):
+    async def get_chat_history(self, user_id: str, chat_id: str) -> list[ChatMessage]:
+        # Verify user is in chat
+        await self.verify_user_in_chat(user_id, chat_id)
+        
         messages = await self.chat_history_repository.get_chat_history(chat_id)
         return messages
+    

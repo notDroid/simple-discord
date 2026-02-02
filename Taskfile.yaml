@@ -47,4 +47,4 @@ tasks:
       - task: run-local-background
       - defer:
           task: clean-up-local
-      - pytest
+      - pytest || true

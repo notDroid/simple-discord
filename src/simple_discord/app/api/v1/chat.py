@@ -6,6 +6,27 @@ from fastapi import APIRouter
 
 router = APIRouter()
 
+'''
+API endpoints for chat operations.
+
+create_chat:
+    - POST /
+    - Request: CreateChatRequest (user_id_list)
+    - Response: CreateChatResponse (chat_id)
+    desc: Create a new chat with a list of user IDs.
+
+send_message:
+    - POST /{chat_id}
+    - Request: SendMessageRequest (user_id, content)
+    - Response: SendMessageResponse (status, timestamp)
+    desc: Send a message to a specific chat.
+
+get_chat_history:
+    - GET /{chat_id}
+    - Request: user_id (as query parameter)
+    - Response: GetChatHistoryResponse (messages)
+    desc: Retrieve the chat history for a given chat ID.
+'''
 @router.post("/", response_model=CreateChatResponse)
 async def create_chat(
     msg: CreateChatRequest,
@@ -32,7 +53,8 @@ async def send_message(
 @router.get("/{chat_id}", response_model=GetChatHistoryResponse)
 async def get_chat_history(
     chat_id: str,
+    user_id: str,
     chat_service = Depends(get_chat_service)
 ):
-    messages = await chat_service.get_chat_history(chat_id=chat_id)
+    messages = await chat_service.get_chat_history(user_id=user_id, chat_id=chat_id)
     return GetChatHistoryResponse(messages=messages)
