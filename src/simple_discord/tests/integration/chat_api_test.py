@@ -11,7 +11,7 @@ async def create_user_helper(client: AsyncClient, api_path: str, name: str) -> s
     return res.json()["user_id"]
 
 # ----------------------------- CREATE CHAT TESTS ---------------------------- #
-
+@pytest.mark.integration
 @pytest.mark.asyncio
 async def test_create_chat_happy_path(client: AsyncClient, api_path: str):
     """
@@ -33,6 +33,7 @@ async def test_create_chat_happy_path(client: AsyncClient, api_path: str):
     data = response.json()
     assert "chat_id" in data
 
+@pytest.mark.integration
 @pytest.mark.asyncio
 async def test_create_chat_not_enough_users(client: AsyncClient, api_path: str):
     """
@@ -50,6 +51,7 @@ async def test_create_chat_not_enough_users(client: AsyncClient, api_path: str):
     assert response.status_code == 400
     assert response.json()["detail"] == "A chat must have at least two users."
 
+@pytest.mark.integration
 @pytest.mark.asyncio
 async def test_create_chat_user_not_found(client: AsyncClient, api_path: str):
     """
@@ -71,7 +73,7 @@ async def test_create_chat_user_not_found(client: AsyncClient, api_path: str):
     assert "does not exist" in response.json()["detail"]
 
 # ----------------------------- SEND MESSAGE TESTS ---------------------------- #
-
+@pytest.mark.integration
 @pytest.mark.asyncio
 async def test_send_message_happy_path(client: AsyncClient, api_path: str):
     """
@@ -94,6 +96,7 @@ async def test_send_message_happy_path(client: AsyncClient, api_path: str):
     assert data["status"] == "Message sent"
     assert "timestamp" in data
 
+@pytest.mark.integration
 @pytest.mark.asyncio
 async def test_send_message_forbidden_user(client: AsyncClient, api_path: str):
     """
@@ -115,6 +118,7 @@ async def test_send_message_forbidden_user(client: AsyncClient, api_path: str):
     assert response.status_code == 403
     assert response.json()["detail"] == "User is not a member of this chat."
 
+@pytest.mark.integration
 @pytest.mark.asyncio
 async def test_send_message_chat_not_found(client: AsyncClient, api_path: str):
     """
@@ -132,6 +136,7 @@ async def test_send_message_chat_not_found(client: AsyncClient, api_path: str):
 
 # ----------------------------- CHAT HISTORY TESTS ---------------------------- #
 
+@pytest.mark.integration
 @pytest.mark.asyncio
 async def test_get_chat_history(client: AsyncClient, api_path: str):
     """
@@ -164,6 +169,7 @@ async def test_get_chat_history(client: AsyncClient, api_path: str):
     assert data["messages"][1]["content"] == "Hi Alice"
     assert data["messages"][1]["user_id"] == bob
 
+@pytest.mark.integration
 @pytest.mark.asyncio
 async def test_get_chat_history_forbidden(client: AsyncClient, api_path: str):
     """

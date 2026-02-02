@@ -9,6 +9,7 @@ async def create_user_helper(client: AsyncClient, api_path: str, name: str) -> s
     })
     return res.json()["user_id"]
 
+@pytest.mark.integration
 @pytest.mark.asyncio
 async def test_simulation_multi_chat_isolation(client: AsyncClient, api_path: str):
     """

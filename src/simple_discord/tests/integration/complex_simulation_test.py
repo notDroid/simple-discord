@@ -108,6 +108,7 @@ async def action_spy_attempt(client: AsyncClient, api_path: str, state: Simulati
 
 # --- 3. The Test Runner ---
 
+@pytest.mark.integration
 @pytest.mark.asyncio
 async def test_complex_simulation(client: AsyncClient, api_path: str):
     print(f"\n\n--- STARTING SIMULATION ({SIMULATION_STEPS} Steps) ---")

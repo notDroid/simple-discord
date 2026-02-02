@@ -22,5 +22,4 @@ async def create_user(
     user_service = Depends(get_user_service)
 ):
     user_id = await user_service.create_user(msg)
-    print(f"Created user with ID: {user_id}")
     return {"user_id": user_id}

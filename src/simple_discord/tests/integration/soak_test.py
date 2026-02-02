@@ -8,7 +8,7 @@ from httpx import AsyncClient, HTTPStatusError
 # --- CONFIGURATION ---
 DURATION_SECONDS = 60 * 60  # Run for 1 hour (Change as needed)
 PRINT_INTERVAL = 1000       # Print stats every 1000 steps
-SLEEP_INTERVAL = 0.01      # Sleep time between actions to control RPS
+SLEEP_INTERVAL = 0      # Sleep time between actions to control RPS
 MAX_HISTORY_PER_CHAT = 20   # Prevent RAM explosion
 ACTION_WEIGHTS = [2, 5, 60, 20, 13] # Lower weight on creating users/chats to stabilize memory
 

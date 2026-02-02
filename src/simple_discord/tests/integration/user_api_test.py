@@ -1,6 +1,7 @@
 import pytest
 from httpx import AsyncClient
 
+@pytest.mark.integration
 @pytest.mark.asyncio
 async def test_create_user_happy_path(client: AsyncClient, api_path: str):
     """
@@ -22,6 +23,7 @@ async def test_create_user_happy_path(client: AsyncClient, api_path: str):
     assert isinstance(data["user_id"], str)
     assert len(data["user_id"]) > 0
 
+@pytest.mark.integration
 @pytest.mark.asyncio
 async def test_create_user_validation_error(client: AsyncClient, api_path: str):
     """
