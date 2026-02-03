@@ -26,3 +26,6 @@ CreateUserRequest = UserMetaData  # Alias for clarity in API schema
 
 class CreateUserResponse(BaseModel):
     user_id: str
+
+class GetUserChatsResponse(BaseModel):
+    chat_id_list: list[str]

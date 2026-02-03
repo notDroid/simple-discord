@@ -36,3 +36,13 @@ class UserDataRepository:
             return None
         user_data = from_dynamo_json(item)
         return UserDataItem.model_validate(user_data)
+
+    async def make_user_tombstone(self, user_id: str):
+        tombstone_item = {
+            "user_id": user_id,
+            "tombstone": True
+        }
+        await self.client.put_item(
+            TableName=self.table_name,
+            Item=to_dynamo_json(tombstone_item)
+        )

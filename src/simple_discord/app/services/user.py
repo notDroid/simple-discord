@@ -22,6 +22,8 @@ class UserService:
     
     async def user_exists(self, user_id: str) -> bool:
         user_data =  await self.user_data_repository.get_user_by_id(user_id)
+        if user_data and getattr(user_data, "tombstone", False):
+            return False
         return user_data is not None
     
     async def create_user(self, user_metadata: UserMetaData):
@@ -32,7 +34,16 @@ class UserService:
         user_data_item = UserDataItem(
             user_id=user_id,
             created_at=timestamp,
+            tombstone=False,
             metadata=user_metadata
         )
         await self.user_data_repository.create_user(user_data_item)
         return user_id
+
+    async def delete_user(self, user_id: str):
+        await self.user_data_repository.make_user_tombstone(user_id)
+
+    async def get_user_chats(self, user_id: str) -> list[str]: 
+        # Note that user_id does not have to exist (tombstone users can have chats)
+        chat_id_list = await self.user_chat_repository.get_user_chats(user_id=user_id)
+        return chat_id_list

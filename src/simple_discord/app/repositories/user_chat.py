@@ -48,3 +48,52 @@ class UserChatRepository:
             })
         )
         return "Item" in response
+
+    async def get_user_chats(self, user_id: str) -> list[str]:
+        response = await self.client.query(
+            TableName=self.table_name,
+            KeyConditionExpression="user_id = :uid",
+            ExpressionAttributeValues=to_dynamo_json({
+                ":uid": user_id
+            })
+        )
+        chat_id_list = [
+            from_dynamo_json(item)["chat_id"]
+            for item in response.get("Items", [])
+        ]
+        return chat_id_list
+
+    async def delete_chat(self, chat_id: str, unit_of_work=None):
+        response = await self.client.query(
+            TableName=self.table_name,
+            IndexName="ChatIdIndex",
+            KeyConditionExpression="chat_id = :cid",
+            ExpressionAttributeValues=to_dynamo_json({
+                ":cid": chat_id
+            }),
+            ProjectionExpression="user_id"
+        )
+        
+
+        delete_requests = [
+            {
+                "DeleteRequest": {
+                    "Key": to_dynamo_json({
+                        "user_id": from_dynamo_json(item)["user_id"],
+                        "chat_id": chat_id
+                    })
+                }
+            }
+            for item in response.get("Items", [])
+        ]
+        
+        if unit_of_work:
+            for request in delete_requests:
+                unit_of_work.add_operation({
+                    "Delete": {
+                        "TableName": self.table_name,
+                        "Key": request["DeleteRequest"]["Key"]
+                    }
+                })
+        else:
+            await batch_request(self.client, self.table_name, delete_requests)
