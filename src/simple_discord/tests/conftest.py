@@ -3,12 +3,12 @@ from httpx import AsyncClient
 import pytest_asyncio
 import pytest
 
-API_ENDPOINT_URL = os.getenv("API_ENDPOINT_URL", "http://localhost:8000")
+API_ENDPOINT = os.getenv("API_ENDPOINT", "http://localhost:8000")
 API_PATH = os.getenv("API_PATH", "/api/v1")
 
 @pytest_asyncio.fixture
 async def client():
-    async with AsyncClient(base_url=API_ENDPOINT_URL) as ac:
+    async with AsyncClient(base_url=API_ENDPOINT) as ac:
         yield ac
 
 @pytest_asyncio.fixture

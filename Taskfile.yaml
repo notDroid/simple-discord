@@ -5,18 +5,23 @@ tasks:
     desc: "Build the docker compose environment"
     cmds:
       - docker-compose build
-      
+
   run-local:
-    desc: "Run local docker compose environment"
+    desc: "Run local docker compose in a simple development environment"
     cmds:
       - docker-compose up
+
+  run-local-sim:
+    desc: "Run local docker compose environment mirroring production setup"
+    cmds:
+      - docker-compose -f infra/local/local-simulation.yaml up
 
   test:
     desc: "Run tests against the server"
     dir: src/simple_discord/tests
     env:
-      API_URL: "http://localhost:8000"
-      API_PATH: "/api/v1"
+      API_ENDPOINT: http://localhost:8000
+      API_PATH: /api/v1
     cmds:
       - pytest -m integration
 
@@ -24,8 +29,8 @@ tasks:
     desc: "Run stress tests against the server"
     dir: src/simple_discord/tests
     env:
-      API_URL: "http://localhost:8000"
-      API_PATH: "/api/v1"
+      API_ENDPOINT: http://localhost:8000
+      API_PATH: /api/v1
     cmds:
       - pytest -m stress -s -v
   

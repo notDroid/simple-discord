@@ -1,0 +1,44 @@
+services:
+  loadbalancer:
+    image: nginx:alpine
+    container_name: simple_discord_lb
+    ports:
+      - "8000:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api
+
+  api:
+    build: ../..
+    deploy:
+      replicas: 4
+    environment:
+      - API_PORT=8000
+      - DYNAMODB_ENDPOINT=http://dynamodb:8000 
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+    depends_on:
+      dynamodb:
+        condition: service_started
+      table-init:
+        condition: service_completed_successfully
+
+  dynamodb:
+    image: amazon/dynamodb-local
+    container_name: simple_discord_db
+    ports:
+      - "8010:8000"
+
+  table-init:
+    build: ../..
+    container_name: simple_discord_init
+    environment:
+      - DYNAMODB_ENDPOINT=http://dynamodb:8000
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+    depends_on:
+      - dynamodb
+    command: python infra/local/init_db.py --table-file config/tables.json

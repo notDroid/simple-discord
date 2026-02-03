@@ -1,6 +1,7 @@
 import pytest
 import random
 import uuid
+import os
 import time
 import asyncio
 from httpx import AsyncClient, HTTPStatusError
@@ -148,6 +149,8 @@ async def test_prolonged_stress(client: AsyncClient, api_path: str):
     start_time = time.time()
     actions = [action_create_user, action_create_chat, action_send_message, action_read_history, action_spy_attempt]
 
+    endpoint = os.getenv("API_ENDPOINT", "http://localhost:8000")
+
     while time.time() - start_time < DURATION_SECONDS:
         metrics.step_count += 1
         
@@ -161,7 +164,8 @@ async def test_prolonged_stress(client: AsyncClient, api_path: str):
 
         # Pick and Run Action
         chosen_action = random.choices(actions, weights=ACTION_WEIGHTS, k=1)[0]
-        await safe_request(chosen_action, metrics, client, api_path, state)
+        async with AsyncClient(base_url=endpoint) as fresh_client:
+            await safe_request(chosen_action, metrics, fresh_client, api_path, state)
         
         # Optional: Sleep briefly to control "Requests Per Second"
         if SLEEP_INTERVAL > 0:

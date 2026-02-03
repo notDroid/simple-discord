@@ -4,9 +4,9 @@ A simple Discord-like chat application backend built with FastAPI and DynamoDB.
 ### Setup
 Dependencies:
 
-    1. Conda
-    2. Taskfile
-    3. Docker and Docker Compose
+1. Conda
+2. Taskfile
+3. Docker and Docker Compose
 
 
 Create and activate the conda environment:
