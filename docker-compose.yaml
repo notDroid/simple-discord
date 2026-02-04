@@ -1,9 +1,6 @@
 services:
   api:
-    build: .
-    container_name: simple_discord_api
-    ports:
-      - "8000:8000"
+    build: backend
     environment:
       - API_PORT=8000
       - DYNAMODB_ENDPOINT=http://dynamodb:8000
@@ -13,17 +10,15 @@ services:
     depends_on:
       dynamodb:
         condition: service_started
-      table-init:
+      init:
         condition: service_completed_successfully
 
   dynamodb:
     image: amazon/dynamodb-local
     container_name: simple_discord_db
-    ports:
-      - "8010:8000"
 
-  table-init:
-    build: .
+  init:
+    build: backend
     container_name: simple_discord_init
     environment:
       - DYNAMODB_ENDPOINT=http://dynamodb:8000
@@ -32,4 +27,6 @@ services:
       - AWS_DEFAULT_REGION=us-east-1
     depends_on:
       - dynamodb
-    command: python infra/local/init_db.py --table-file config/tables.json
+    volumes:
+      - ./infra/:/app/infra/:ro
+    command: python infra/local/init_db.py --table-file infra/config/tables.json

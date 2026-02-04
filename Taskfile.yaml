@@ -3,21 +3,18 @@ version: '3'
 tasks:
   build:
     desc: "Build the docker compose environment"
-    dir: backend
     cmds:
       - docker-compose build
 
   run-local:
     desc: "Run local docker compose in a simple development environment"
-    dir: backend
     cmds:
       - docker-compose up
 
   run-local-sim:
     desc: "Run local docker compose environment mirroring production setup"
-    dir: backend
     cmds:
-      - docker-compose -f infra/local/local-simulation.yaml up --build
+      - docker compose -f docker-compose.yaml -f infra/local/docker-compose.yaml up
 
   test:
     desc: "Run tests against the server"

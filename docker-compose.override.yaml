@@ -1,0 +1,5 @@
+services:
+  api:
+    container_name: simple_discord_api
+    ports:
+      - "8000:8000"
