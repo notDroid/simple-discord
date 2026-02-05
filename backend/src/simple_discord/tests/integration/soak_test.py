@@ -8,7 +8,7 @@ from httpx import AsyncClient, HTTPStatusError
 
 # --- CONFIGURATION ---
 DURATION_SECONDS = 60 * 60  # Run for 1 hour
-PRINT_INTERVAL = 1000       # Print stats every 1000 steps
+PRINT_INTERVAL = 100        # Print stats every 100 steps
 SLEEP_INTERVAL = 0          # Sleep time between actions
 MAX_HISTORY_PER_CHAT = 20   # Prevent RAM explosion
 
@@ -242,6 +242,7 @@ async def test_prolonged_stress(client: AsyncClient, api_path: str):
             state.prune_history()
 
         if metrics.step_count % PRINT_INTERVAL == 0:
+            print(state.chats)
             metrics.print_summary()
 
         chosen_action = random.choices(actions, weights=ACTION_WEIGHTS, k=1)[0]
