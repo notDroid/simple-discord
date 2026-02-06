@@ -30,7 +30,7 @@ class SimulationState:
 async def action_create_user(client: AsyncClient, api_path: str, state: SimulationState):
     """Creates a new unique user."""
     name = f"User_{str(uuid.uuid4())[:6]}"
-    res = await client.post(f"{api_path}/user/", json={
+    res = await client.post(f"{api_path}/users/", json={
         "username": name,
         "email": f"{name}@example.com"
     })
@@ -47,7 +47,7 @@ async def action_create_chat(client: AsyncClient, api_path: str, state: Simulati
     # Pick 2 to 4 distinct users
     participants = random.sample(state.users, k=random.randint(2, min(4, len(state.users))))
     
-    res = await client.post(f"{api_path}/chat/", json={"user_id_list": participants})
+    res = await client.post(f"{api_path}/chats/", json={"user_id_list": participants})
     assert res.status_code == 200
     
     chat_id = res.json()["chat_id"]
@@ -64,7 +64,7 @@ async def action_send_message(client: AsyncClient, api_path: str, state: Simulat
     msg_content = f"Msg_{uuid.uuid4().hex[:8]}"
     
     res = await client.post(
-        f"{api_path}/chat/{chat_id}", 
+        f"{api_path}/chats/{chat_id}", 
         json={"user_id": sender, "content": msg_content}
     )
     assert res.status_code == 201
@@ -80,7 +80,7 @@ async def action_read_history(client: AsyncClient, api_path: str, state: Simulat
 
     reader = random.choice(members)
     
-    res = await client.get(f"{api_path}/chat/{chat_id}", params={"user_id": reader})
+    res = await client.get(f"{api_path}/chats/{chat_id}", params={"user_id": reader})
     assert res.status_code == 200
     
     api_messages = [m["content"] for m in res.json()["messages"]]
@@ -100,7 +100,7 @@ async def action_spy_attempt(client: AsyncClient, api_path: str, state: Simulati
     
     spy = random.choice(outsiders)
     
-    res = await client.get(f"{api_path}/chat/{chat_id}", params={"user_id": spy})
+    res = await client.get(f"{api_path}/chats/{chat_id}", params={"user_id": spy})
     
     # CRITICAL: This must fail
     assert res.status_code == 403

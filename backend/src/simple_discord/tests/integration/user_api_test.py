@@ -14,7 +14,7 @@ async def test_create_user_happy_path(client: AsyncClient, api_path: str):
     }
 
     # ACT
-    response = await client.post(f"{api_path}/user/", json=payload)
+    response = await client.post(f"{api_path}/users/", json=payload)
 
     # ASSERT
     assert response.status_code == 200
@@ -36,7 +36,7 @@ async def test_create_user_validation_error(client: AsyncClient, api_path: str):
     }
 
     # ACT
-    response = await client.post(f"{api_path}/user/", json=payload)
+    response = await client.post(f"{api_path}/users/", json=payload)
 
     # ASSERT
     assert response.status_code == 422

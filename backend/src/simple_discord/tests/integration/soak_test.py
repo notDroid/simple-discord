@@ -89,7 +89,7 @@ async def safe_request(func, metrics, *args):
 
 async def action_create_user(client, api_path, state):
     name = f"User_{str(uuid.uuid4())[:6]}"
-    res = await client.post(f"{api_path}/user/", json={"username": name, "email": f"{name}@ex.com"})
+    res = await client.post(f"{api_path}/users/", json={"username": name, "email": f"{name}@ex.com"})
     if res.status_code == 200:
         state.users.append(res.json()["user_id"])
     else:
@@ -98,7 +98,7 @@ async def action_create_user(client, api_path, state):
 async def action_create_chat(client, api_path, state):
     if len(state.users) < 2: return
     participants = random.sample(state.users, k=random.randint(2, min(4, len(state.users))))
-    res = await client.post(f"{api_path}/chat/", json={"user_id_list": participants})
+    res = await client.post(f"{api_path}/chats/", json={"user_id_list": participants})
     if res.status_code == 200:
         chat_id = res.json()["chat_id"]
         state.chats[chat_id] = participants
@@ -113,7 +113,7 @@ async def action_send_message(client, api_path, state):
     sender = random.choice(members)
     msg_content = f"Msg_{uuid.uuid4().hex[:8]}"
     
-    res = await client.post(f"{api_path}/chat/{chat_id}", json={"user_id": sender, "content": msg_content})
+    res = await client.post(f"{api_path}/chats/{chat_id}", json={"user_id": sender, "content": msg_content})
     
     if res.status_code != 201:
         raise AssertionError(f"Expected 201, got {res.status_code}")
@@ -125,7 +125,7 @@ async def action_read_history(client, api_path, state):
     if not chat_id or not members: return
     
     reader = random.choice(members)
-    res = await client.get(f"{api_path}/chat/{chat_id}", params={"user_id": reader})
+    res = await client.get(f"{api_path}/chats/{chat_id}", params={"user_id": reader})
     
     if res.status_code != 200:
         raise AssertionError(f"Read failed: {res.status_code}")
@@ -143,7 +143,7 @@ async def action_spy_attempt(client, api_path, state):
     if not outsiders: return
     
     spy = random.choice(outsiders)
-    res = await client.get(f"{api_path}/chat/{chat_id}", params={"user_id": spy})
+    res = await client.get(f"{api_path}/chats/{chat_id}", params={"user_id": spy})
     
     if res.status_code != 403:
         raise AssertionError(f"Security breach! Spy got {res.status_code}")
@@ -155,7 +155,7 @@ async def action_get_user_chats(client, api_path, state):
     user_id = state.get_random_user()
     if not user_id: return
 
-    res = await client.get(f"{api_path}/user/{user_id}/chats")
+    res = await client.get(f"{api_path}/users/{user_id}/chats")
     
     if res.status_code != 200:
         raise AssertionError(f"Failed to get user chats: {res.status_code}")
@@ -179,7 +179,7 @@ async def action_delete_chat(client, api_path, state):
 
     if not state.chats[chat_id]:
         return  # No members to authenticate deletion
-    res = await client.delete(f"{api_path}/chat/{chat_id}", params={"user_id": state.chats[chat_id][0]})
+    res = await client.delete(f"{api_path}/chats/{chat_id}", params={"user_id": state.chats[chat_id][0]})
     
     if res.status_code != 204:
         raise AssertionError(f"Failed to delete chat: {res.status_code}")
@@ -194,7 +194,7 @@ async def action_delete_user(client, api_path, state):
     # Don't delete if population is critical (keeps simulation alive)
     if len(state.users) < 5: return
 
-    res = await client.delete(f"{api_path}/user/{user_id}")
+    res = await client.delete(f"{api_path}/users/{user_id}")
     
     if res.status_code != 204:
         raise AssertionError(f"Failed to delete user: {res.status_code}")
