@@ -3,8 +3,9 @@
 import { use, useState, useEffect } from 'react';
 import useSWR from 'swr';
 
-const API_ENDPOINT = 'http://localhost:8000/api/v1/';
-const user_id ='01KGRHHPBDTM6S19EJ7WPM2YAG';
+const host_name = "walis-macbook-pro";
+const API_ENDPOINT = `http://${host_name}:8000/api/v1/`;
+const user_id ='01KGTSE09YZJSZNR77KESMKPS5';
 const refreshInterval = 1000; // 1 second
 
 async function getChatHistory(chat_id: string, user_id: string) {
@@ -59,7 +60,7 @@ export function ChatBar({ onSendMessage }: { onSendMessage: (message: string) =>
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Type your message..."
-          className="flex-1 bg-transparent outline-none py-2"
+          className="flex-1 text-black bg-transparent outline-none py-2"
         />
         
         <button

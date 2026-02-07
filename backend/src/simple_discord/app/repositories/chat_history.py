@@ -1,17 +1,18 @@
 from simple_discord.app.core import settings
 from simple_discord.app.schemas import ChatMessage
-from simple_discord.app.db import to_dynamo_json, from_dynamo_json, process_batch
+from simple_discord.app.db import to_dynamo_json, from_dynamo_json
+from .base_repo import BaseRepository
 
-class ChatHistoryRepository:
+class ChatHistoryRepository(BaseRepository):
     table_name = settings.CHAT_HISTORY_TABLE_NAME
     
     def __init__(self, client):
-        self.client = client
+        super().__init__(client)
 
     async def create_message(self, item: ChatMessage):
         dynamo_item = to_dynamo_json(item.model_dump())
         
-        await self.client.put_item(
+        await self.writer.put_item(
             TableName=self.table_name,
             Item=dynamo_item,
             ConditionExpression='attribute_not_exists(chat_id)',
@@ -36,21 +37,19 @@ class ChatHistoryRepository:
             ExpressionAttributeValues=to_dynamo_json({":cid": chat_id}),
             ProjectionExpression="ulid" # Only fetch the Sort Key
         ):
-            batch_requests = []
+            keys = []
             
             for item in page.get("Items", []):
-                batch_requests.append({
-                    "DeleteRequest": {
-                        "Key": {
-                            "chat_id": {"S": chat_id},
-                            "ulid": item["ulid"]
-                        }
-                    }
-                })
+                keys.append(
+                    to_dynamo_json({
+                        "chat_id": chat_id,
+                        "ulid": from_dynamo_json(item)["ulid"]
+                    })
+                )
                 
-                if len(batch_requests) == 25:
-                    await process_batch(self.client, self.table_name, batch_requests)
-                    batch_requests = [] # Reset
+                if len(keys) == 25:
+                    await self.writer.delete_batch(TableName=self.table_name, Keys=keys)
+                    keys = [] # Reset
             
-            if batch_requests:
-                await process_batch(self.client, self.table_name, batch_requests)
+            if keys:
+                await self.writer.delete_batch(TableName=self.table_name, Keys=keys)
