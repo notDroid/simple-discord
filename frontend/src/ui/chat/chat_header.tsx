@@ -1,4 +1,4 @@
-export default function Header() {
+export default function ChatHeader() {
     return (
         <div className="
             w-full h-header 

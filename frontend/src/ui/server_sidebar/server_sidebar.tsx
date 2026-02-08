@@ -1,4 +1,4 @@
-import ServerIcon from "@/components/ui/server_icon";
+import ServerIcon from "./server_icon";
 
 export default function ServerSidebar() {
   return (

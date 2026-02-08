@@ -1,4 +1,4 @@
-import ServerSidebar from "@/components/layout/server_sidebar";
+import ServerSidebar from "@/ui/server_sidebar/server_sidebar";
 
 export default function ChatsLayout({
   children,
@@ -6,11 +6,9 @@ export default function ChatsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen w-full">
+    <div className="fixed flex h-screen w-full">
       <ServerSidebar />
-      <div className="h-full w-full">
-        {children}
-      </div>
+      {children}
     </div>
   );
 }
