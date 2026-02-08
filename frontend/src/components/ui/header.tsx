@@ -6,6 +6,7 @@ export default function Header() {
             bg-discord-bg
             border-b
             border-discord-outline
+            shrink-0
         ">
 
             <h1 className="text-lg font-semibold text-discord-text px-3">

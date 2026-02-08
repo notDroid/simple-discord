@@ -11,7 +11,7 @@ const SKELETON_CONFIG = {
     avatarSize: 'w-10 h-10',
     lineHeight: 'h-4',
     gap: 'gap-5',
-    padding: 'px-4 py-4',
+    padding: 'p-4',
   },
   // Animation Physics
   animation: {
@@ -46,7 +46,7 @@ const generateSkeletonData = () => {
 
 // --- 3. Sub-Components ---
 
-const SkeletonLine = ({ width, delay }) => {
+const SkeletonLine = ({ width, delay }: {width: number, delay: number}) => {
   const { theme, animation } = SKELETON_CONFIG;
   
   return (
@@ -61,7 +61,7 @@ const SkeletonLine = ({ width, delay }) => {
   );
 };
 
-const SkeletonMessage = ({ lineWidths, messageIndex }) => {
+const SkeletonMessage = ({ lineWidths, messageIndex }: {lineWidths: number[], messageIndex: number}) => {
   const { theme, animation } = SKELETON_CONFIG;
 
   // Base delay for this specific message block
@@ -101,7 +101,7 @@ export default function LoadingChatPanel() {
 
   return (
     <div 
-      className={`flex-grow h-full flex flex-col ${theme.padding} mb-1 overflow-hidden bg-transparent`}
+      className={`grow h-full flex flex-col ${theme.padding} mb-1 overflow-hidden bg-transparent my-1`}
       role="status"
       aria-label="Loading chat history"
     >
