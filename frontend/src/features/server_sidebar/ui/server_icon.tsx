@@ -1,8 +1,15 @@
+export interface ServerIconProps {
+  index: number;
+  chat_id: string;
+  icon_url?: string;
+  has_unread: boolean;
+  is_active: boolean;
+}
 
-export default function ServerIcon(
-  { label, active, unread }: 
-  { label: string; active?: boolean; unread?: boolean }
+export function ServerIcon(
+  { server_item }: { server_item: ServerIconProps }
 ) {
+
   return (
     <div className="relative group flex items-center justify-center w-full my-1">
       <div 
@@ -12,13 +19,13 @@ export default function ServerIcon(
           rounded-r-full 
           w-pill
           transition-all duration-200 ease-in-out
-          -translate-x-0.5 /* Slight pull back to hide fully when h-0 */
+          -translate-x-0.5
           
-          ${active 
-            ? 'h-pill-active'                           // Top Priority: Active
-            : unread 
-              ? 'h-pill-small group-hover:h-pill-hover' // Unread logic (Small -> Grow on hover)
-              : 'h-0          group-hover:h-pill-hover' // Normal logic (Hidden -> Grow on hover)
+          ${server_item.is_active 
+            ? 'h-pill-active' 
+            : server_item.has_unread 
+              ? 'h-pill-small group-hover:h-pill-hover'
+              : 'h-0          group-hover:h-pill-hover'
           }
         `}
       />
@@ -28,17 +35,25 @@ export default function ServerIcon(
           flex items-center justify-center
           transition-all duration-200 ease-linear
           shadow-sm
+          overflow-hidden  /* Added: Ensures the image clips to the circle/rounded shape */
           
-          /* Determine Shape: Active is rounded, Hover is rounded, Default is circle */
-          ${active ? 'rounded-discord' : 'rounded-[50%] group-hover:rounded-discord'}
+          ${server_item.is_active ? 'rounded-discord' : 'rounded-[50%] group-hover:rounded-discord'}
 
-          /* Determine Colors */
-          ${active 
+          ${server_item.is_active 
             ? 'bg-brand text-white' 
             : 'bg-discord-sidebar text-discord-text group-hover:bg-brand group-hover:text-white'
           }
       `}>
-        {label}
+        {/* Render Image if URL exists, otherwise render ID */}
+        {server_item.icon_url ? (
+          <img 
+            src={server_item.icon_url} 
+            alt={`Server ${server_item.chat_id} Icon`}
+            className="w-full h-full object-cover" 
+          />
+        ) : (
+          server_item.index
+        )}
       </button>
     </div>
   );

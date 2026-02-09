@@ -1,7 +1,7 @@
 // Views
 import ChatHeaderView from "./chat_header";
-import ChatPanelView from "./chat_panel";
-import ChatBarView from "./chat_bar";
+import ChatPanelView from "../components/chat_panel";
+import ChatBarView from "../components/chat_bar";
 
 // UI Components
 import ErrorChatPanel from "../ui/chat_error_panel";
@@ -20,7 +20,7 @@ export default async function ChatWindowView({ chat_id }: { chat_id: string }) {
   let loaded = false;
 
   try {
-
+    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate loading delay
     initial_messages = await getChatHistory(chat_id, user_id);
     loaded = true;
   

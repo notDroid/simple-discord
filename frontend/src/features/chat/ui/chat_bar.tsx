@@ -2,7 +2,7 @@
 import { useState } from 'react';
 
 
-export default function ChatBar({ onSendMessage }: { onSendMessage: (message: string) => void }) {
+export default function ChatBar({ onSendMessage = () => {} }: { onSendMessage?: (message: string) => void }) {
   const [message, setMessage] = useState<string>('');
 
   const handleSubmit = (e: React.FormEvent) => {

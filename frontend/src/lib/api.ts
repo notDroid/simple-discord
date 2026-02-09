@@ -1,7 +1,12 @@
 import { ApiError, NetworkError } from "./errors";
+import { cache } from 'react';
 
-const host_name = "walis-macbook-pro";
-const API_ENDPOINT = `http://${host_name}:8000/api/v1/`;
+const PUBLIC_URL: string = process.env.NEXT_PUBLIC_API_URL!;
+const INTERNAL_URL: string = process.env.INTERNAL_API_URL!;
+
+const API_ENDPOINT: string = typeof window === 'undefined' 
+  ? (INTERNAL_URL || PUBLIC_URL) 
+  : PUBLIC_URL;
 
 async function secure_fetch(url: string, options?: RequestInit) {
   let res: Response;
@@ -24,12 +29,12 @@ async function secure_fetch(url: string, options?: RequestInit) {
 }
 
 export async function getChatHistory(chat_id: string, user_id: string) {
-  const res = await secure_fetch(`${API_ENDPOINT}chats/${chat_id}?user_id=${user_id}`);
+  const res = await secure_fetch(`${API_ENDPOINT}/chats/${chat_id}?user_id=${user_id}`);
   return res;
 }
 
 export async function sendMessage(chat_id: string, user_id: string, content: string) {
-  const res = await secure_fetch(`${API_ENDPOINT}chats/${chat_id}`, {
+  const res = await secure_fetch(`${API_ENDPOINT}/chats/${chat_id}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -38,3 +43,10 @@ export async function sendMessage(chat_id: string, user_id: string, content: str
   });
   return res;
 }
+
+async function _getChatList(user_id: string) {
+  const res = await secure_fetch(`${API_ENDPOINT}/users/${user_id}/chats`);
+  return res;
+}
+
+export const getChatList = cache(_getChatList);

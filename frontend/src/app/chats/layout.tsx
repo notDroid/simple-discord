@@ -1,4 +1,4 @@
-import ServerSidebar from "@/features/server_sidebar/ui/server_sidebar";
+import ServerSidebarView from "@/features/server_sidebar/view/server_sidebar";
 
 export default function ChatsLayout({
   children,
@@ -7,7 +7,7 @@ export default function ChatsLayout({
 }) {
   return (
     <div className="fixed flex h-screen w-full">
-      <ServerSidebar />
+      <ServerSidebarView />
       {children}
     </div>
   );

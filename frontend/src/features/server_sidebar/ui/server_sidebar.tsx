@@ -1,6 +1,4 @@
-import ServerIcon from "./server_icon";
-
-export default function ServerSidebar() {
+export default function ServerSidebar({ children }: { children: React.ReactNode }) {
   return (
     <nav className="
         flex-none
@@ -13,12 +11,7 @@ export default function ServerSidebar() {
         border-r
         border-discord-outline
     ">
-      <ServerIcon label="A" active />
-      <ServerIcon label="B" unread />
-      <ServerIcon label="C" />
-      
-      <ServerIcon label="D" unread />
-      <ServerIcon label="E" />
+      {children}
     </nav>
   );
 }
