@@ -1,5 +1,5 @@
 # Harmony Chat
-A simple discord/slack based application for learning purposes built with FastAPI (backend) and Next.js (frontend and backend for frontend).
+A fullstack discord/slack based chat app built with FastAPI (backend) and Next.js (frontend) for learning and demonstration purposes.
 
 ### Setup
 Dependencies:
