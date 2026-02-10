@@ -1,7 +1,7 @@
 # simple_discord/app/db/unit_of_work.py
 from typing import List, Any
 from botocore.exceptions import ClientError
-from simple_discord.app.core import active_writer_var
+from harmony.app.core import active_writer_var
 
 class UnitOfWork:
     def __init__(self, client):

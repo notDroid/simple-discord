@@ -11,6 +11,11 @@ tasks:
     cmds:
       - docker-compose up
 
+  clean-local:
+    desc: "Stop and remove local docker compose environment"
+    cmds:
+      - docker-compose down --volumes --remove-orphans
+
   run-local-sim:
     desc: "Run local docker compose environment mirroring production setup"
     cmds:
@@ -18,7 +23,7 @@ tasks:
 
   test:
     desc: "Run tests against the server"
-    dir: backend/src/simple_discord/tests
+    dir: backend/src/harmony/tests
     env:
       API_ENDPOINT: http://localhost:8000
       API_PATH: /api/v1
@@ -27,7 +32,7 @@ tasks:
 
   test-stress:
     desc: "Run stress tests against the server"
-    dir: backend/src/simple_discord/tests
+    dir: backend/src/harmony/tests
     env:
       API_ENDPOINT: http://localhost:8000
       API_PATH: /api/v1

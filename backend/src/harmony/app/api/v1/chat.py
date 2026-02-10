@@ -1,4 +1,4 @@
-from simple_discord.app.schemas import *
+from harmony.app.schemas import *
 from .dependencies import get_chat_service
 
 from fastapi import Depends, BackgroundTasks, APIRouter

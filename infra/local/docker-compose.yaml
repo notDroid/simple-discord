@@ -1,7 +1,7 @@
 services:
   loadbalancer:
     image: nginx:alpine
-    container_name: simple_discord_lb
+    container_name: lb
     ports:
       - "8000:80"
     volumes:

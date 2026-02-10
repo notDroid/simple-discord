@@ -1,9 +1,9 @@
 from ulid import ULID
 from datetime import datetime, timezone
 from fastapi import HTTPException
-from simple_discord.app.schemas import *
-from simple_discord.app.repositories import ChatHistoryRepository, UserChatRepository, ChatDataRepository
-from simple_discord.app.db import UnitOfWorkFactory
+from harmony.app.schemas import *
+from harmony.app.repositories import ChatHistoryRepository, UserChatRepository, ChatDataRepository
+from harmony.app.db import UnitOfWorkFactory
 from .user import UserService
 
 

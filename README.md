@@ -1,5 +1,5 @@
-# SimpleDiscord
-A simple Discord-like chat application backend built with FastAPI and DynamoDB.
+# Harmony Chat
+A simple discord/slack based application for learning purposes built with FastAPI (backend) and Next.js (frontend and backend for frontend).
 
 ### Setup
 Dependencies:
@@ -12,7 +12,7 @@ Dependencies:
 Create and activate the conda environment:
 ```bash
 conda env create -f environment.yaml
-conda activate simple-discord
+conda activate harmony
 python -m pip install -e backend
 ```
 

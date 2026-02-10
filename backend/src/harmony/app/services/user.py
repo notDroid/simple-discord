@@ -1,5 +1,5 @@
-from simple_discord.app.repositories import UserChatRepository, UserDataRepository
-from simple_discord.app.schemas import UserDataItem, UserMetaData
+from harmony.app.repositories import UserChatRepository, UserDataRepository
+from harmony.app.schemas import UserDataItem, UserMetaData
 
 from ulid import ULID
 from datetime import datetime, timezone

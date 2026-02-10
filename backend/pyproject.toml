@@ -1,7 +1,7 @@
 [project]
-name = "simple-discord"
+name = "harmony-chat-api"
 version = "0.1.0"
-description = "A simple discord backend service"
+description = "Implementation of harmony-chat backend"
 readme = "README.md"
 requires-python = ">=3.12"
 

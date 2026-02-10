@@ -1,7 +1,7 @@
 from fastapi import Depends, Request
-from simple_discord.app.repositories import ChatHistoryRepository, UserChatRepository, ChatDataRepository, UserDataRepository
-from simple_discord.app.services import ChatService, UserService
-from simple_discord.app.db import UnitOfWorkFactory
+from harmony.app.repositories import ChatHistoryRepository, UserChatRepository, ChatDataRepository, UserDataRepository
+from harmony.app.services import ChatService, UserService
+from harmony.app.db import UnitOfWorkFactory
 
 def get_dynamo_client(request: Request):
     return request.app.state.dynamodb

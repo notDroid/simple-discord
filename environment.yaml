@@ -1,4 +1,4 @@
-name: simple-discord
+name: harmony
 channels:
   - defaults
 dependencies:
@@ -62,7 +62,6 @@ dependencies:
       - python-dotenv==1.2.1
       - python-ulid==3.1.0
       - s3transfer==0.14.0
-      - simple-discord==0.1.0
       - six==1.17.0
       - starlette==0.50.0
       - typing-extensions==4.15.0
@@ -71,4 +70,4 @@ dependencies:
       - uvicorn==0.40.0
       - wrapt==1.17.3
       - yarl==1.22.0
-prefix: /opt/homebrew/anaconda3/envs/simple-discord
+prefix: /opt/homebrew/anaconda3/envs/harmony

@@ -1,6 +1,6 @@
-from simple_discord.app.core import settings
-from simple_discord.app.db import to_dynamo_json, from_dynamo_json
-from simple_discord.app.schemas import UserChatItem
+from harmony.app.core import settings
+from harmony.app.db import to_dynamo_json, from_dynamo_json
+from harmony.app.schemas import UserChatItem
 from .base_repo import BaseRepository
 
 class UserChatRepository(BaseRepository):

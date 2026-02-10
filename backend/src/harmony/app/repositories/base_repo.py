@@ -1,5 +1,5 @@
-from simple_discord.app.db.writers import DirectWriter
-from simple_discord.app.core import active_writer_var
+from harmony.app.db.writers import DirectWriter
+from harmony.app.core import active_writer_var
 
 
 class BaseRepository:
