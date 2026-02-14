@@ -45,7 +45,7 @@ class UserService:
             metadata=user_metadata
         )
 
-        with self.uow_factory() as uow:
+        async with self.uow_factory() as uow:
             await self.email_set_repository.add_email(req.email)
             await self.user_data_repository.create_user(user_data_item)
             await uow.commit()

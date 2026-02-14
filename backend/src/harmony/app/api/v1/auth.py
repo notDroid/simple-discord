@@ -20,6 +20,6 @@ POST /token
 @router.post("/token", response_model=Token)
 async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    user_service = Depends(get_auth_service)
+    auth_service = Depends(get_auth_service)
 ):
-    return await user_service.authenticate_user(form_data.username, form_data.password)
+    return await auth_service.authenticate_user(form_data.username, form_data.password)

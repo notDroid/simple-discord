@@ -1,12 +1,5 @@
 import pytest
-from harmony.tests.utils.client import AppClient, SimulationActor
-from harmony.tests.utils.data_gen import generate_user_data
-
-# Helper to quickly spawn an actor
-async def spawn_actor(client: AppClient) -> SimulationActor:
-    data = generate_user_data()
-    uid = await client.create_user(**data)
-    return SimulationActor(uid, data['username'], client)
+from harmony.tests.utils import AppClient, spawn_actor
 
 @pytest.mark.integration
 @pytest.mark.asyncio

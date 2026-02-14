@@ -9,6 +9,6 @@ def generate_user_data():
     uid = str(uuid.uuid4())[:8]
     return {
         "username": f"user_{uid}",
-        "email": f"user_{uid}@example.com",
-        "password": "password123" # Optional based on your schema
+        "email": f"user_{uid}@{random_string(6)}.com",
+        "password": random_string(12),
     }

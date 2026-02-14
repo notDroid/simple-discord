@@ -74,7 +74,6 @@ def get_chat_service(
     )
 
 def get_auth_service(
-    user_data_repository: UserDataRepository = Depends(get_user_data_repository),
-    unit_of_work_factory: UnitOfWorkFactory = Depends(get_unit_of_work)
+    user_service: UserService = Depends(get_user_service)
 ):
-    return AuthService(user_data_repository=user_data_repository, unit_of_work=unit_of_work_factory)
+    return AuthService(user_service=user_service)

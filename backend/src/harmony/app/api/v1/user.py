@@ -24,7 +24,7 @@ async def sign_up(
     auth_create: UserCreate,
     auth_service = Depends(get_auth_service)
 ):
-    user_id = await auth_service.create_user(auth_create)
+    user_id = await auth_service.sign_up(auth_create)
     return {"user_id": user_id}
 
 @router.get("/me/chats", response_model=GetUserChatsResponse)
