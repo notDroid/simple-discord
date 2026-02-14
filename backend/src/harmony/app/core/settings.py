@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     USER_CHAT_TABLE_NAME: str = "UserChat"
     CHAT_DATA_TABLE_NAME: str = "ChatData"
     USER_DATA_TABLE_NAME: str = "UserData"
+    EMAIL_SET_TABLE_NAME: str = "EmailSet"
 
     # Authentication Configuration
     SECRET_KEY: str = "temporary_secret_key"

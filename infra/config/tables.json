@@ -29,6 +29,13 @@
         ]
     },
 
+    "EmailSet": {
+        "TableName": "EmailSet",
+        "BillingMode": "PAY_PER_REQUEST",
+        "KeySchema": [{"AttributeName": "email", "KeyType": "HASH"}],
+        "AttributeDefinitions": [{"AttributeName": "email", "AttributeType": "S"}]
+    },
+
     "ChatData": {
         "TableName": "ChatData",
         "BillingMode": "PAY_PER_REQUEST",

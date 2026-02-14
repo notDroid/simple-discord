@@ -26,6 +26,19 @@ class UserDataRepository(BaseRepository):
             return None
         user_data = from_dynamo_json(item)
         return UserDataItem.model_validate(user_data)
+    
+    async def get_user_by_email(self, email: str) -> UserDataItem | None:
+        response = await self.client.query(
+            TableName=self.table_name,
+            IndexName="EmailIndex",
+            KeyConditionExpression="email = :e",
+            ExpressionAttributeValues=to_dynamo_json({":e": email}),
+        )
+        items = response.get("Items", [])
+        if not items:
+            return None
+        user_data = from_dynamo_json(items[0])
+        return UserDataItem.model_validate(user_data)
 
     async def make_user_tombstone(self, user_id: str):
         await self.writer.update_item(

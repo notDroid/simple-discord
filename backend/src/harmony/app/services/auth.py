@@ -2,7 +2,6 @@ from datetime import timedelta
 from fastapi import HTTPException, status
 
 from harmony.app.core import get_password_hash, verify_password, create_token, settings
-from harmony.app.repositories import UserDataRepository
 from .user import UserService
 from harmony.app.schemas import *
 
@@ -24,14 +23,12 @@ class AuthService:
 
     def __init__(
             self,
-            user_service: UserService,
-            user_data_repository: UserDataRepository
+            user_service: UserService
     ):
         self.user_service = user_service
-        self.user_data_repository = user_data_repository
 
     async def sign_up(self, user_create: UserCreate) -> str:
-        existing_user = await self.user_data_repository.get_user_by_email(user_create.email)
+        existing_user = await self.user_service.get_user_by_email(user_create.email)
         if existing_user:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -40,16 +37,14 @@ class AuthService:
 
         hashed_pw = get_password_hash(user_create.password)
 
-        user_id = await self.user_service.create_user_with_auth(
-            email=user_create.email,
-            hashed_password=hashed_pw,
-            metadata=user_create.metadata
+        user_id = await self.user_service.create_user(
+            req=user_create.model_copy(update={"hashed_password": hashed_pw})
         )
         
         return user_id
 
     async def authenticate_user(self, email: str, password: str) -> Token:
-        user = await self.user_data_repository.get_user_by_email(email)
+        user = await self.user_service.get_user_by_email(email)
         
         if not user or getattr(user, "tombstone", False):
             raise HTTPException(

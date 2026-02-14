@@ -2,11 +2,11 @@ from pydantic import BaseModel, EmailStr
 
 class UserMetaData(BaseModel):
     username: str
-    email: EmailStr
     created_at: str | None
 
 class UserDataItem(BaseModel):
     user_id: str
+    email: EmailStr
     tombstone: bool
     hashed_password: str | None = None
     metadata: UserMetaData
