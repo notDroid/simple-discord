@@ -8,23 +8,15 @@ router = APIRouter()
 '''
 API endpoints for user operations.
 
-Create User:
-    - POST /
-    - Request: CreateUserRequest (username, email)
-    - Response: CreateUserResponse (user_id)
-    desc: Create a new user with a username and email.
+POST /
+  Body:    { ... } (CreateUserRequest)
+  Returns: { "user_id": "<str>" }
 
-Get User Chats:
-    - GET /{user_id}/chats
-    - Request: user_id (path parameter)
-    - Response: GetUserChatsResponse (chat_id_list)
-    desc: Retrieve the list of chat IDs associated with a user.
+GET /{user_id}/chats
+  Returns: { "chat_id_list": ["<str>", ...] }
 
-Delete User:
-    - DELETE /{user_id}
-    - Request: user_id (path parameter)
-    - Response: 204 No Content
-    desc: Mark a user as deleted (tombstone).
+DELETE /{user_id}
+  Status:  204 No Content
 '''
 
 @router.post("/", response_model=CreateUserResponse)

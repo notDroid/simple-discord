@@ -4,7 +4,6 @@ from .chat import ChatMessage
 
 # Send Message
 class SendMessageRequest(BaseModel):
-    user_id: str
     content: str
 
 class SendMessageResponse(BaseModel):

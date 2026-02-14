@@ -50,7 +50,7 @@ class TransactionWriter:
         op = {
             "Put": {
                 "TableName": TableName,
-                "Item": Item
+                "Item": Item,
                 **kwargs
             }
         }            

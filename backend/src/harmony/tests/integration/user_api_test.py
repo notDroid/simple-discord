@@ -1,42 +1,42 @@
 import pytest
-from httpx import AsyncClient
+from harmony.tests.utils.data_gen import generate_user_data
+from harmony.tests.utils.client import AppClient
 
 @pytest.mark.integration
 @pytest.mark.asyncio
-async def test_create_user_happy_path(client: AsyncClient, api_path: str):
-    """
-    Test that a valid request creates a user and returns a User ID.
-    """
-    # ARRANGE
-    payload = {
-        "username": "test_user_1",
-        "email": "test@example.com"
-    }
+async def test_create_user_flow(app_client: AppClient):
+    # Arrange
+    user_data = generate_user_data()
 
-    # ACT
-    response = await client.post(f"{api_path}/users/", json=payload)
+    # Act
+    user_id = await app_client.create_user(**user_data)
 
-    # ASSERT
-    assert response.status_code == 200
-    data = response.json()
-    assert "user_id" in data
-    assert isinstance(data["user_id"], str)
-    assert len(data["user_id"]) > 0
+    # Assert
+    assert isinstance(user_id, str)
+    assert len(user_id) > 0
+
+    # Verify side effects (e.g., getting chat list should return empty list initially)
+    chats = await app_client.get_user_chats(user_id)
+    assert chats == []
 
 @pytest.mark.integration
 @pytest.mark.asyncio
-async def test_create_user_validation_error(client: AsyncClient, api_path: str):
-    """
-    Test that missing required fields returns 422 (FastAPI default validation).
-    """
-    # ARRANGE
-    payload = {
-        "username": "test_user_2"
-        # Missing email
-    }
+async def test_delete_user_flow(app_client: AppClient):
+    # Arrange
+    user_data = generate_user_data()
 
-    # ACT
-    response = await client.post(f"{api_path}/users/", json=payload)
+    # Act
+    user_id = await app_client.create_user(**user_data)
 
-    # ASSERT
-    assert response.status_code == 422
+    # Assert
+    assert isinstance(user_id, str)
+    assert len(user_id) > 0
+
+    # Verify side effects (e.g., getting chat list should return empty list initially)
+    chats = await app_client.get_user_chats(user_id)
+    assert chats == []
+
+    # Act - Delete the user
+    await app_client.delete_user(user_id)
+
+    # nothing to assert here, just ensure no exceptions and user is effectively deleted

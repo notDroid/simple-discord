@@ -28,12 +28,10 @@ class UserDataRepository(BaseRepository):
         return UserDataItem.model_validate(user_data)
 
     async def make_user_tombstone(self, user_id: str):
-        tombstone_item = {
-            "user_id": user_id,
-            "tombstone": True
-        }
-        await self.writer.put_item(
+        await self.writer.update_item(
             TableName=self.table_name,
-            Item=to_dynamo_json(tombstone_item),
-            ConditionExpression='attribute_not_exists(user_id)',
+            Key=to_dynamo_json({"user_id": user_id}), 
+            UpdateExpression="SET tombstone = :t",
+            ConditionExpression="attribute_exists(user_id)",
+            ExpressionAttributeValues=to_dynamo_json({":t": True}) 
         )

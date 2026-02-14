@@ -1,9 +1,15 @@
 from contextlib import asynccontextmanager
 import aioboto3
-from fastapi import FastAPI
+import traceback
+import logging
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from .core import settings
 from .api.v1 import router as api_v1_router
 from fastapi.middleware.cors import CORSMiddleware
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 session = aioboto3.Session()
 
@@ -35,3 +41,17 @@ app.add_middleware(
 @app.get("/")
 async def root():
     return {"message": "Simple Discord API is running."}
+
+# Global exception handler to catch unhandled exceptions and log them
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    error_trace = traceback.format_exc()
+    logger.error(f"UNHANDLED EXCEPTION on {request.method} {request.url}\n{error_trace}")
+    
+    return JSONResponse(
+        status_code=500,
+        content={
+            "detail": "Internal Server Error", 
+            "trace": error_trace if app.debug else None 
+        }
+    )

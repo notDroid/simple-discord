@@ -41,10 +41,7 @@ class ChatService:
         task1 = self.user_chat_repository.check_user_in_chat(user_id=user_id, chat_id=chat_id)
         task2 = self.chat_data_repository.check_chat_exists(chat_id)
 
-        try:
-            user_in_chat, chat_exists = await asyncio.gather(task1, task2)
-        except Exception as e:
-            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, f"Failed to verify user in chat: {str(e)}")
+        user_in_chat, chat_exists = await asyncio.gather(task1, task2)
 
         if not chat_exists:
             raise HTTPException(status.HTTP_404_NOT_FOUND, "Chat does not exist.")
@@ -109,14 +106,11 @@ class ChatService:
             if not exists:
                 raise HTTPException(status.HTTP_400_BAD_REQUEST, f"User {user_id} does not exist.")
         
-        try: 
-            async with self.uow_factory() as uow:
-                await self.chat_data_repository.require_chat_exists(chat_id)
-                await self.user_chat_repository.require_user_in_chat(chat_id, user_id)
-                await self.user_chat_repository.add_users_to_chat(chat_id=chat_id, user_id_list=user_id_list)
-                await uow.commit()
-        except Exception as e:
-            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, f"Failed to add users to chat: {str(e)}")
+        async with self.uow_factory() as uow:
+            await self.chat_data_repository.require_chat_exists(chat_id)
+            await self.user_chat_repository.require_user_in_chat(chat_id, user_id)
+            await self.user_chat_repository.add_users_to_chat(chat_id=chat_id, user_id_list=user_id_list)
+            await uow.commit()
 
     async def send_message(self, chat_id: str, user_id: str, content: str):
         # Verify user is in chat
@@ -135,41 +129,28 @@ class ChatService:
             content=content
         )
 
-        try:
-            await self.chat_history_repository.create_message(msg)
-        except Exception as e:
-            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, f"Failed to send message: {str(e)}")
+        await self.chat_history_repository.create_message(msg)
 
         return timestamp
 
     async def get_chat_history(self, user_id: str, chat_id: str) -> list[ChatMessage]:
         await self.check_user_in_chat(user_id, chat_id)
-        
-        try:
-            messages = await self.chat_history_repository.get_chat_history(chat_id)
-        except Exception as e:
-            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, f"Failed to retrieve chat history: {str(e)}")
+        messages = await self.chat_history_repository.get_chat_history(chat_id)
         return messages
     
     async def leave_chat(self, user_id: str, chat_id: str):
-        try:
-            async with self.uow_factory() as uow:
-                await self.chat_data_repository.require_chat_exists(chat_id)
-                await self.user_chat_repository.require_user_in_chat(chat_id, user_id)
-                await self.user_chat_repository.remove_user_from_chat(chat_id=chat_id, user_id=user_id)
-                await uow.commit()
-        except Exception as e:
-            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, f"Failed to leave chat: {str(e)}")
+        async with self.uow_factory() as uow:
+            await self.chat_data_repository.require_chat_exists(chat_id)
+            await self.user_chat_repository.require_user_in_chat(chat_id, user_id)
+            await self.user_chat_repository.remove_user_from_chat(chat_id=chat_id, user_id=user_id)
+            await uow.commit()
     
     async def delete_chat(self, user_id: str, chat_id: str):
-        try:
-            async with self.uow_factory() as uow:
-                await self.chat_data_repository.require_chat_exists(chat_id)
-                await self.user_chat_repository.require_user_in_chat(user_id, chat_id)
-                await self.chat_data_repository.delete_chat(chat_id)
-                await uow.commit()
-        except Exception as e:
-            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, f"Failed to delete chat: {str(e)}")
+        async with self.uow_factory() as uow:
+            await self.chat_data_repository.require_chat_exists(chat_id)
+            await self.user_chat_repository.require_user_in_chat(user_id, chat_id)
+            await self.chat_data_repository.delete_chat(chat_id)
+            await uow.commit()
 
     async def background_delete_chat_history(self, chat_id: str):
         await asyncio.gather(

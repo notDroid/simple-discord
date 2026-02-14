@@ -6,47 +6,51 @@ from fastapi import Depends, BackgroundTasks, APIRouter
 router = APIRouter()
 
 '''
-API endpoints for chat operations.
+Chat API Endpoints:
 
-create_chat:
-    - POST /
-    - Request: CreateChatRequest (user_id_list)
-    - Response: CreateChatResponse (chat_id)
-    desc: Create a new chat with a list of user IDs.
+POST /
+  Query:   ?user_id=<str>
+  Body:    { "user_id_list": ["<str>", ...] }
+  Returns: { "chat_id": "<str>" }
 
-send_message:
-    - POST /{chat_id}
-    - Request: SendMessageRequest (user_id, content)
-    - Response: SendMessageResponse (status, timestamp)
-    desc: Send a message to a specific chat.
+POST /{chat_id}
+  Query:   ?user_id=<str>
+  Body:    { "content": "<str>" }
+  Returns: { "status": "Message sent", "timestamp": <datetime> }
+  Status:  201 Created
 
-get_chat_history:
-    - GET /{chat_id}
-    - Request: user_id (as query parameter)
-    - Response: GetChatHistoryResponse (messages)
-    desc: Retrieve the chat history for a given chat ID.
+GET /{chat_id}
+  Query:   ?user_id=<str>
+  Returns: { "messages": [...] }
+
+DELETE /{chat_id}
+  Query:   ?user_id=<str>
+  Status:  204 No Content
 '''
+
 @router.post("/", response_model=CreateChatResponse)
 async def create_chat(
-    msg: CreateChatRequest,
+    user_id: str,
+    data: CreateChatRequest,
     chat_service = Depends(get_chat_service)
 ):
     chat_id = await chat_service.create_chat(
-        user_id=msg.user_id_list[0],
-        user_id_list=msg.user_id_list[1:],
+        user_id=user_id,
+        user_id_list=data.user_id_list,
     )
     return {"chat_id": chat_id}
 
 @router.post("/{chat_id}", response_model=SendMessageResponse, status_code=201)
 async def send_message(
     chat_id: str,
-    msg: SendMessageRequest, 
+    user_id: str,
+    data: SendMessageRequest, 
     chat_service = Depends(get_chat_service)
 ):
     timestamp = await chat_service.send_message(
         chat_id=chat_id, 
-        user_id=msg.user_id, 
-        content=msg.content
+        user_id=user_id, 
+        content=data.content
     )
     return {"status": "Message sent", "timestamp": timestamp}
 
