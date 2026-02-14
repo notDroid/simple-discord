@@ -1,5 +1,5 @@
 from harmony.app.repositories import UserChatRepository, UserDataRepository
-from harmony.app.schemas import UserDataItem, UserMetaData
+from harmony.app.schemas import UserDataItem, UserMetaData, UserCreate
 
 from ulid import ULID
 from datetime import datetime, timezone
@@ -13,9 +13,6 @@ class UserService:
     ):
         self.user_chat_repository = user_chat_repository
         self.user_data_repository = user_data_repository
-
-    async def check_user_in_chat(self, user_id: str, chat_id: str) -> bool:
-        return await self.user_chat_repository.verify_user_chat(chat_id=chat_id, user_id=user_id)
     
     async def get_user_by_id(self, user_id: str) -> UserDataItem | None:
         return await self.user_data_repository.get_user_by_id(user_id)
@@ -26,14 +23,18 @@ class UserService:
             return False
         return user_data is not None
     
-    async def create_user(self, user_metadata: UserMetaData):
+    async def create_user(self, req: UserCreate):
         ulid_val = ULID()
         user_id = str(ulid_val)
         timestamp = datetime.fromtimestamp(ulid_val.timestamp, timezone.utc).isoformat()
+        user_metadata = UserMetaData(
+            username=req.username,
+            email=req.email,
+            created_at=timestamp
+        )
 
         user_data_item = UserDataItem(
             user_id=user_id,
-            created_at=timestamp,
             tombstone=False,
             metadata=user_metadata
         )
@@ -44,6 +45,5 @@ class UserService:
         await self.user_data_repository.make_user_tombstone(user_id)
 
     async def get_user_chats(self, user_id: str) -> list[str]: 
-        # Note that user_id does not have to exist (tombstone users can have chats)
         chat_id_list = await self.user_chat_repository.get_user_chats(user_id=user_id)
         return chat_id_list

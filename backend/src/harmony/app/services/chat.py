@@ -38,7 +38,7 @@ class ChatService:
             1. Verifies the user is in the chat via UserChatRepository.
             2. Verifies the chat exists via ChatDataRepository.
         '''
-        task1 = self.user_service.check_user_in_chat(user_id=user_id, chat_id=chat_id)
+        task1 = self.user_chat_repository.check_user_in_chat(user_id=user_id, chat_id=chat_id)
         task2 = self.chat_data_repository.check_chat_exists(chat_id)
 
         try:

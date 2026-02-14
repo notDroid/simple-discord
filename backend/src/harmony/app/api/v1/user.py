@@ -29,10 +29,10 @@ Delete User:
 
 @router.post("/", response_model=CreateUserResponse)
 async def create_user(
-    msg: CreateUserRequest,
+    meta_data: CreateUserRequest,
     user_service = Depends(get_user_service)
 ):
-    user_id = await user_service.create_user(msg)
+    user_id = await user_service.create_user(meta_data)
     return {"user_id": user_id}
 
 @router.get("/{user_id}/chats", response_model=GetUserChatsResponse)

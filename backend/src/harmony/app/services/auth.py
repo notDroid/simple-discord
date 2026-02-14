@@ -1,11 +1,10 @@
 from datetime import timedelta
 from fastapi import HTTPException, status
 
-from harmony.app.core.security import get_password_hash, verify_password, create_access_token
-from harmony.app.core.settings import settings
+from harmony.app.core import get_password_hash, verify_password, create_token, settings
 from harmony.app.repositories import UserDataRepository
-from harmony.app.services.user import UserService
-from harmony.app.schemas.auth import UserCreate, Token 
+from .user import UserService
+from harmony.app.schemas import *
 
 class AuthService:
     '''
@@ -67,7 +66,7 @@ class AuthService:
             )
 
         access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-        access_token = create_access_token(
+        access_token = create_token(
             data={"sub": user.user_id}, 
             expires_delta=access_token_expires
         )

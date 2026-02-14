@@ -1,6 +1,7 @@
 from fastapi import Depends, Request
+
 from harmony.app.repositories import ChatHistoryRepository, UserChatRepository, ChatDataRepository, UserDataRepository
-from harmony.app.services import ChatService, UserService
+from harmony.app.services import ChatService, UserService, AuthService
 from harmony.app.db import UnitOfWorkFactory
 
 def get_dynamo_client(request: Request):
@@ -42,3 +43,9 @@ def get_chat_service(
         user_service=user_service, 
         unit_of_work=unit_of_work_factory
     )
+
+def get_auth_service(
+    user_data_repository: UserDataRepository = Depends(get_user_data_repository),
+    unit_of_work_factory = Depends(get_unit_of_work)
+):
+    return AuthService(user_data_repository=user_data_repository, unit_of_work=unit_of_work_factory)

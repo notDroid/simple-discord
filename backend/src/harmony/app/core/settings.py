@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     AWS_SECRET_ACCESS_KEY: str = "test"
 
     # DynamoDB Configuration
-    DYNAMODB_ENDPOINT: str = "http://localhost:8000"
+    DYNAMODB_ENDPOINT: str = "http://localhost:8080"
 
     CHAT_HISTORY_TABLE_NAME: str = "ChatHistory"
     USER_CHAT_TABLE_NAME: str = "UserChat"

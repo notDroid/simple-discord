@@ -32,7 +32,8 @@ async def create_chat(
     chat_service = Depends(get_chat_service)
 ):
     chat_id = await chat_service.create_chat(
-        user_id_list=msg.user_id_list,
+        user_id=msg.user_id_list[0],
+        user_id_list=msg.user_id_list[1:],
     )
     return {"chat_id": chat_id}
 
