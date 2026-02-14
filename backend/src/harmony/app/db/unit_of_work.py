@@ -1,4 +1,3 @@
-# simple_discord/app/db/unit_of_work.py
 from typing import List, Any
 from botocore.exceptions import ClientError
 from harmony.app.core import active_writer_var

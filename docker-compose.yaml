@@ -14,24 +14,23 @@ services:
         condition: service_started
       init:
         condition: service_completed_successfully
-    command: uvicorn src.harmony.app.main:app --host 0.0.0 --port 8000 --log-level debug
 
-  frontend:
-    build: 
-      context: frontend
-      args:
-        - NODE_ENV=production
-        - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
-        - NEXT_PUBLIC_INTERNAL_API_URL=http://api:8000/api/v1
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
-      - NEXT_PUBLIC_INTERNAL_API_URL=http://api:8000/api/v1
-    depends_on:
-      api:
-        condition: service_started
+  # frontend:
+  #   build: 
+  #     context: frontend
+  #     args:
+  #       - NODE_ENV=production
+  #       - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+  #       - INTERNAL_API_URL=http://api:8000/api/v1
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - NODE_ENV=production
+  #     - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+  #     - INTERNAL_API_URL=http://api:8000/api/v1
+  #   depends_on:
+  #     api:
+  #       condition: service_started
 
   dynamodb:
     image: amazon/dynamodb-local

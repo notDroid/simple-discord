@@ -36,7 +36,7 @@ async def create_chat(
     """
     Creates a new chat room between the current user and a list of target users.
     
-    - **user_id_list**: A list of UUIDs for the users to include.
+    - **user_id_list**: A list of user_ids for the users to include.
     - **Constraints**: 
         - Max 10 users per chat (initially, you can add more later).
         - You cannot create a chat with non-existent users.

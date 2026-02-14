@@ -7,6 +7,8 @@ from fastapi.responses import JSONResponse
 from .core import settings
 from .api.v1 import router as api_v1_router
 from fastapi.middleware.cors import CORSMiddleware
+from scalar_fastapi import get_scalar_api_reference
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -40,7 +42,7 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"message": "Simple Discord API is running."}
+    return {"message": "Harmony API is running."}
 
 # Global exception handler to catch unhandled exceptions and log them
 @app.exception_handler(Exception)
@@ -54,4 +56,11 @@ async def global_exception_handler(request: Request, exc: Exception):
             "detail": "Internal Server Error", 
             "trace": error_trace if app.debug else None 
         }
+    )
+
+@app.get("/scalar", include_in_schema=False)
+async def scalar_html():
+    return get_scalar_api_reference(
+        openapi_url=app.openapi_url,
+        title=app.title
     )

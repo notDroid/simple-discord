@@ -28,7 +28,7 @@ class UserService:
             return False
         return user_data is not None
     
-    async def create_user(self, req: UserCreateRequest):
+    async def create_user(self, req: UserCreateRequest, hashed_password: str) -> str:
         ulid_val = ULID()
         user_id = str(ulid_val)
         timestamp = datetime.fromtimestamp(ulid_val.timestamp, timezone.utc).isoformat()
@@ -41,7 +41,7 @@ class UserService:
             user_id=user_id,
             tombstone=False,
             email=req.email,
-            hashed_password=req.hashed_password,
+            hashed_password=hashed_password,
             metadata=user_metadata
         )
 

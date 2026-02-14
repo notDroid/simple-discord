@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     EMAIL_SET_TABLE_NAME: str = "EmailSet"
 
     # Authentication Configuration
-    SECRET_KEY: str = "temporary_secret_key"
+    SECRET_KEY: str = "64d54ec76be75e906e03e3fba806e2c1ff5f8da12dfb9226e7eea2a72e477c96" # temporary hardcoded key for dev. in prod we set it with a env variable.
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
 

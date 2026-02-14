@@ -14,9 +14,9 @@ class StressConfig:
         MAX_USERS=50,  # Max users *per worker*
     )
     DURATION_SECONDS: int = 30
-    CONCURRENT_WORKERS: int = 10
+    CONCURRENT_WORKERS: int = 50
     VERBOSE_ERRORS: bool = True
-    MONITOR_INTERVAL: int = 2  # Print metrics every X seconds
+    MONITOR_INTERVAL: int = 2 
 
 # ==========================================
 # WORKER & MONITOR
@@ -80,7 +80,7 @@ async def independent_worker(
 @pytest.mark.stress
 @pytest.mark.asyncio
 async def test_stress_simulation(app_client: AppClient):
-    print(f"\n--- Starting Independent Stress Test ({StressConfig.CONCURRENT_WORKERS} Workers) ---")
+    print(f"\n--- Starting Stress Test ({StressConfig.CONCURRENT_WORKERS} Workers) ---")
     
     stop_event = asyncio.Event()
     metrics = SafeMetrics()

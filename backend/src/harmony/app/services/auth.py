@@ -38,7 +38,8 @@ class AuthService:
         hashed_pw = get_password_hash(user_create.password)
 
         user_id = await self.user_service.create_user(
-            req=user_create.model_copy(update={"hashed_password": hashed_pw})
+            req=user_create,
+            hashed_password=hashed_pw,
         )
         
         return user_id
