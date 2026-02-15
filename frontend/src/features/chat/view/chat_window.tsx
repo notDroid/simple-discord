@@ -8,7 +8,7 @@ import ErrorChatPanel from "../ui/chat_error_panel";
 
 // API Functions
 import { getChatHistory} from "@/lib/api";
-import { ApiError, NetworkError } from "@/lib/errors";
+import { ApiError, NetworkError } from "@/lib/api/errors";
 
 // Temporary constants for demo purposes.
 const refreshInterval = 1000;

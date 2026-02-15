@@ -2,45 +2,53 @@ version: '3'
 
 tasks:
   default:
-      silent: true
-      cmds:
-        - task --list
+    silent: true
+    cmds:
+      - task --list
         
   build:
     desc: "Build the docker compose environment"
     cmds:
-      - docker-compose build
+      - docker compose build
 
-  run-local:
+  run:local:
     desc: "Run local docker compose in a simple development environment"
     cmds:
-      - docker-compose up
+      - docker compose up
 
-  clean-local:
-    desc: "Stop and remove local docker compose environment"
-    cmds:
-      - docker-compose down --volumes --remove-orphans
-
-  run-local-sim:
+  run:local:sim:
     desc: "Run local docker compose environment mirroring production setup"
     cmds:
       - docker compose -f docker-compose.yaml -f infra/local/docker-compose.yaml up
 
-  test:
+  clean:local:
+    desc: "Stop and remove local docker compose environment"
+    cmds:
+      - docker compose down --volumes --remove-orphans
+
+  test:integration:
     desc: "Run tests against the server"
     dir: backend/src/harmony/tests
     env:
       API_ENDPOINT: http://localhost:8000
-      API_PATH: /api/v1
     cmds:
       - pytest -m integration
 
-  test-stress:
+  test:stress:
     desc: "Run stress tests against the server"
     dir: backend/src/harmony/tests
     env:
       API_ENDPOINT: http://localhost:8000
-      API_PATH: /api/v1
     cmds:
       - pytest -m stress -s -v
   
+  openapi:extract:
+    desc: "Extract OpenAPI schema from FastAPI and save to frontend"
+    cmds:
+      - python backend/specs/extract_openapi.py > frontend/openapi.json
+
+  openapi:generate:
+    desc: "Generate API client from OpenAPI schema using Orval"
+    dir: frontend
+    cmds:
+      - npx orval
