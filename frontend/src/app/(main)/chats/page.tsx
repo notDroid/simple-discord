@@ -6,7 +6,7 @@ export default async function HomePage() {
   // For now return a blank page. We can implement the actual chat list later. The main point of this page is just to redirect to the first chat.
   return (
     <div className="flex items-center justify-center h-screen">
-      <h1 className="text-2xl font-bold">Welcome to Simple Discord!</h1>
+      <h1 className="text-2xl font-bold">Welcome to Harmony!</h1>
     </div>
   );
   // const data = await getChatList(user_id);
