@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ServerIcon, ServerIconProps } from "../ui/server_icon";
@@ -7,7 +5,6 @@ import ServerSidebar from "../ui/server_sidebar";
 
 export default function ServerList({ chat_id_list }: { chat_id_list: string[] }) {
   const pathname = usePathname();
-
   return (
     <ServerSidebar>
       {chat_id_list.map((chat_id, index) => {
